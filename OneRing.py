@@ -6,19 +6,15 @@ class AI_Agent:
   legal_moves = [(0, 0, 1, 1), (1,0,1,0), (0, 1, 1,0), (0, 0, 1,0)]
   traversed_states = []
   
-  def get_legal_moves(self, state):
-      
+  def get_meaningful_moves(self, state):
+
+    # These two lines is nothing else but the means-ends method. 
+    # No need to try other combinations when the ring waits to be picked up.
       if state[0][0] == state[1][0] == state[2][0] ==0 and state[3][0] == 1:
-          return [(0, 0, 1,0),(0, 0, 1, 1), (1,0,1,0), (0, 1, 1,0)]
+          return [(0, 0, 1,0)]
 
-      
-      if state[2][0] == 1:
-        riverbank = 0
-      else:
-          riverbank = 1
-    
-
-          
+      # Riverbank on the left == 0;   
+      riverbank = 1 - state[2][0]
           
       remaining_legal_moves = self.legal_moves.copy()
       if state[0][riverbank] == 0:
@@ -35,7 +31,8 @@ class AI_Agent:
       
   def __init__(self):
     self.name = "AI agent for Gollum, Frodo, Sam and the One Ring."
-    
+
+    # Creating variables for easier understanding when refering to numpy matrix.
     self.Gollum = 0
     self.Frodo = 1
     self.Sam = 2
@@ -43,13 +40,19 @@ class AI_Agent:
     
     self.left = 1
     self.right = 0    
+    
+    # All possible legal problems states are generated and stored before the agent start traversing.
+    # This will avoid for the agent to travers in funny states by mistakes.
     self.legal_states = []
+    
+    
     self.generate_states_smartly()
-    print(self.name)
+    
    
   def is_legal_state(self, state):
       result = True
-      
+
+      # The ring is either with Sam or alone, regardless what side of the river.
       for riverbank in [self.left, self.right]:
         if state[self.One_Ring][riverbank] == 1 and state[self.Sam][riverbank] == 0:
             if state[self.Gollum][riverbank] == 1 or state[self.Frodo][riverbank] == 1:
@@ -65,7 +68,7 @@ class AI_Agent:
       # One Ring = 0
 
       ones_state = [self.left, self.right]
-      i = 0
+      
       for g in ones_state:
           for f in ones_state:
               for s in ones_state:
@@ -105,11 +108,12 @@ class AI_Agent:
   def cross_river(self):
       temp_state = self.initial_state
       self.traversed_states.append(temp_state)
-      
+
+      # Safe-guard loop.
       loop = 0
       while (temp_state != self.goal_state).any():
           loop +=1
-          prefered_legal_moves = self.get_legal_moves(temp_state)
+          prefered_legal_moves = self.get_meaningful_moves(temp_state)
           for legal_move in prefered_legal_moves:
               xor_matrix = self.move_to_matrix(legal_move)
               next_state = np.array((temp_state != xor_matrix),dtype=bool).astype(int)
@@ -137,5 +141,3 @@ class AI_Agent:
 if __name__ == "__main__":
     one_ring_agent = AI_Agent()
     one_ring_agent.cross_river()
-
-
