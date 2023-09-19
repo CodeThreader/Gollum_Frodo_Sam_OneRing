@@ -10,8 +10,27 @@ class AI_Agent:
       
       if state[0][0] == state[1][0] == state[2][0] ==0 and state[3][0] == 1:
           return [(0, 0, 1,0),(0, 0, 1, 1), (1,0,1,0), (0, 1, 1,0)]
+
+      
+      if state[2][0] == 1:
+        riverbank = 0
       else:
-          return self.legal_moves
+          riverbank = 1
+    
+
+          
+          
+      remaining_legal_moves = self.legal_moves.copy()
+      if state[0][riverbank] == 0:
+        remaining_legal_moves.remove((1,0,1,0))
+      if state[1][riverbank] == 0:
+        remaining_legal_moves.remove((0,1,1,0)) 
+      if state[3][riverbank] == 0:
+        remaining_legal_moves.remove((0,0,1,1))              
+              
+
+      return remaining_legal_moves 
+          
       
       
   def __init__(self):
