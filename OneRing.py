@@ -50,15 +50,14 @@ class AI_Agent:
     
    
   def is_legal_state(self, state):
-      result = True
-
+      
       # The ring is either with Sam or alone, regardless what side of the river.
       for riverbank in [self.left, self.right]:
         if state[self.One_Ring][riverbank] == 1 and state[self.Sam][riverbank] == 0:
             if state[self.Gollum][riverbank] == 1 or state[self.Frodo][riverbank] == 1:
                 return False
           
-      return result
+      return True
     
 
   def generate_states_smartly(self):
@@ -98,11 +97,10 @@ class AI_Agent:
 
               
   def state_found_in_states(self, state, states):
-      result = False
       for temp_state in states:
           if (state == temp_state).all():
               return True          
-      return result
+      return False
   
            
   def cross_river(self):
